@@ -19,3 +19,8 @@
         left: calc(50% - 250px);
     }
 }
+
+.ErrorModal{
+    background-color: red;
+    color:white;
+}

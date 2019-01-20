@@ -3,6 +3,7 @@ import classes from './Burger.module.css';
 import BurgerIngredient from './BurgerIngredients/BurgerIngredients';
 
 const burger =(props) =>{
+   
     let transformedIngredient = Object.keys(props.ingredients)
         .map(ingKey =>{
             return [...Array(props.ingredients[ingKey])].map((_, i)=> {
@@ -24,7 +25,7 @@ const burger =(props) =>{
                 <BurgerIngredient type='bread-bottom'></BurgerIngredient>
             </div>
         )
-
+        
 };
 
 export default burger;

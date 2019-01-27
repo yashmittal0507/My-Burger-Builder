@@ -3,33 +3,129 @@ import classes from './ContactData.module.css';
 import Button from '../../../components/UIComponents/Button/Button';
 import axios from '../../../Axios-Order';
 import Spinner from '../../../components/UIComponents/Spinner/Spinner';
+import Input from '../../../components/UIComponents/Input/Input';
 class ContactForm extends Component {
     state ={
-       name:'',
-       email:'',
-       address:{
-           street:'',
-           postalCode:''
-       },
-       loading:false
+        orderForm:{
+            Name:{
+                elementType:'input',
+                elementConfig:{
+                    type:'text',
+                    placeholder:'Your Name'
+                },
+                value:'',
+                validation:{
+                    required:true
+                },
+                valid:false,
+                touched:false,
+                validationErrorMessage:'Please Enter your Name'
+                }
+                ,
+            Email:{
+                elementType:'input',
+                elementConfig:{
+                    type:'email',
+                    placeholder:'Your E-Mail'
+                },
+                value:'',
+                validation:{
+                    required:true
+                },
+                valid:false,
+                touched:false,
+                validationErrorMessage:'Please Enter a valid Email Address'
+                },
+               
+            Street:{
+                elementType:'input',
+                elementConfig:{
+                    type:'text',
+                    placeholder:'Street Name'
+                },
+                value:'',
+                validation:{
+                    required:true
+                },
+                valid:false,
+                touched:false,
+                validationErrorMessage:'Please Enter Street Address'
+                },
+            City:{
+                elementType:'input',
+                elementConfig:{
+                    type:'text',
+                    placeholder:'City Name'
+                },
+                value:'',
+                validation:{
+                    required:true
+                },
+                valid:false,
+                touched:false,
+                validationErrorMessage:'Please Enter The City '
+                },
+            Pincode:{
+                elementType:'input',
+                elementConfig:{
+                    type:'number',
+                    placeholder:'Postal Code'
+                },
+                value:'',
+                validation:{
+                    required:true,
+                    minLength:5,
+                    maxLength:5
+                },
+                valid:false,
+                touched:false,
+                validationErrorMessage:'Please Enter a valid Pincode'
+                },
+            Country:{
+                elementType:'input',
+                elementConfig:{
+                    type:'text',
+                    placeholder:'Country'
+                },
+                value:'',
+                validation:{
+                    required:true
+                },
+                valid:false,
+                touched:false,
+                validationErrorMessage:'Please Enter Country Name'
+                },
+            'Delivery-Method':{
+                elementType:'select',
+                elementConfig:{
+                   options:[{
+                       value:'fastest',displayName:'Fastest'
+                   },
+                   {
+                    value:'cheapest',displayName:'Cheapest'
+                }]
+                },
+                value:'',
+                valid:true,
+                validation:{}
+                },
+        },
+       loading:false,
+       isFormValid:false
     }
 
-    orderhandler=()=>{
+    orderhandler=(event)=>{
+        event.preventDefault();
         this.setState({loading:true});
+        const formData={};
+        for (let formDataField in this.state.orderForm){
+            formData[formDataField] = this.state.orderForm[formDataField].value
+        }
         const order ={
             ingredients:this.props.ingredients,
             price:this.props.totalPrice,
-            customer:{
-                Name:'Yash',
-                Email:'Test@Test.com',
-                'Delivery-Method':'Fastest',
-                Address:{
-                    Street:'Test-Street',
-                    City:'Banglore',
-                    Pincode:474006,
-                    Country:'India'
-                }
-            }
+            orderData:formData
+        
         }
        
          axios.post( '/orders.json', order )
@@ -43,19 +139,73 @@ class ContactForm extends Component {
             } );
 
     }
+    inputChangeHandler(event,inputIdentifier){
+        const updatedOrderForm ={...this.state.orderForm}
+
+        const updatedFormElement = {...updatedOrderForm[inputIdentifier]};
+        updatedFormElement.value =event.target.value;
+        updatedFormElement.valid = this.checkValidatity( updatedFormElement.value,updatedFormElement.validation);
+        updatedFormElement.touched=true;
+        
+        updatedOrderForm[inputIdentifier] =   updatedFormElement
+        let isFormValid=true;
+        for(let inputElement in updatedOrderForm){
+            isFormValid = updatedOrderForm[inputElement].valid && isFormValid 
+            console.log(this.state.isFormValid,inputElement)
+        }
+     
+        this.setState({orderForm:updatedOrderForm,isFormValid:isFormValid})
+       ;
+    }
+
+    checkValidatity(value,rules){
+        let isValid=true;
+
+        if(!rules){
+            return true
+        }
+        if(rules.required){
+            isValid =value!==''
+        }
+        if(rules.minLength){
+            isValid = value.length>=5 && isValid;
+        }
+        if(rules.maxLength){
+            isValid = value.length<=5 && isValid;
+        }
+        return isValid;
+    }
+
 render() {
     let form =null;
     if(this.state.loading){
         form =<Spinner/>
     }
     else {
-        form = <form>
-        <input type="text" placeholder="Your Name" name="name"/>
-        <input type="email" placeholder="Mail Id" name="mail"/>
-        <input type="text" placeholder="Street" name="street"/>
-        <input type="text" placeholder="postalCode" name="postal"/>
-        <Button btnType="Success" clicked={this.orderhandler}>ORDER</Button>
+        const formElementsArray = [];
+
+        for(let key in this.state.orderForm){
+            formElementsArray.push({
+                id:key,
+                config:this.state.orderForm[key]
+            })
+        }
+
+        form = (<form onSubmit={this.orderhandler}>
+       { formElementsArray.map(el=>{
+           return  <Input elementType={el.config.elementType}
+           elementConfig={el.config.elementConfig}
+            key={el.id} 
+            changed={(event)=> this.inputChangeHandler(event,el.id)}
+            invalid={!el.config.valid}
+            shouldValidate={el.config.validation}
+            touched={el.config.touched}
+            errorMessage={el.config.validationErrorMessage}
+            />
+        })}
+        <Button btnType="Success" clicked={this.orderhandler} disabled={!this.state.isFormValid}>ORDER</Button>
         </form>
+        )
     }
     return(
         <div className={classes.ContactData}>

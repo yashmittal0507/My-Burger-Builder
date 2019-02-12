@@ -1,27 +1,34 @@
 import React,{Component} from 'react';
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
-import {Route} from 'react-router-dom';
+import {Route,Redirect} from 'react-router-dom';
 import ContactForm from './ContactData/ContactData';
+import {connect} from 'react-redux';
 class Checkout extends Component {
-    state ={
-        ingredients:null,
-        totalPrice:0
-    }
-    componentWillMount(){
-        const queryParams = new URLSearchParams(this.props.location.search)
-        const ingredients={};
-        for(let params of queryParams.entries()){
-            if(params[0]==='totalPrice'){
-                this.setState({totalPrice:+params[1]})
-            }
-            else {
-                ingredients[params[0]]=+params[1]
-            }
+    // state ={
+    //     ingredients:null,
+    //     totalPrice:0
+    // }
+    // componentWillMount(){
+    //     const queryParams = new URLSearchParams(this.props.location.search)
+    //     const ingredients={};
+    //     for(let params of queryParams.entries()){
+    //         if(params[0]==='totalPrice'){
+    //             this.setState({totalPrice:+params[1]})
+    //         }
+    //         else {
+    //             ingredients[params[0]]=+params[1]
+    //         }
          
-        }
-        this.setState({ingredients:ingredients});
-        // console.log(this.props);
-    }
+    //     }
+    //     this.setState({ingredients:ingredients});
+    //     // console.log(this.props);
+    // }
+
+    // componentWillMount(){
+    //     if(!this.props.ings){
+    //         this.props.history.goBack(); // This is one more way of redirecting if no ingredients are there
+    //     }
+    // }
     checkoutCancelHandler= ()=>{
         this.props.history.goBack();
     }
@@ -30,31 +37,29 @@ class Checkout extends Component {
     }
 
     render(){
-        // let checkoutSummary = null;
-        // if(this.state.ingredients){
-        //     checkoutSummary = (
-        //      <React.Fragment>
-            
-        //    </React.Fragment>
-
-            
-        //     )
-        // }
-        // else {
-        //     checkoutSummary= <div>No Ingredient's Added yet</div>
-        // }
-        return (
-            <React.Fragment>
-            <CheckoutSummary 
-            ingredients={this.state.ingredients}
-            checkoutCancelHandler={this.checkoutCancelHandler}
-            checkoutContinueHandler={this.checkoutContinueHandler}/>
-            <Route path={this.props.match.path+'/contact-data-form'} 
-            render={(props)=><ContactForm ingredients={this.state.ingredients} totalPrice={this.state.totalPrice} {...props}/>}/>
+        let summary =<Redirect to="/"/>
+        // let summary=null;
+        if(this.props.ings){
+            const purchasedRedirect =this.props.purchased?<Redirect to ="/"/>:null
+             summary=<React.Fragment>
+             {purchasedRedirect}
+                <CheckoutSummary 
+                ingredients={this.props.ings}
+                checkoutCancelHandler={this.checkoutCancelHandler}
+                checkoutContinueHandler={this.checkoutContinueHandler}/>
+                <Route path={this.props.match.path+'/contact-data-form'} 
+                component={ContactForm}/>
            </React.Fragment>
-
-        )
+        }
+        return summary
     }
 }
 
-export default Checkout;
+const mapStateToProps = state =>{
+    return {
+        ings:state.burgerBuilder.ingredients,
+        purchased:state.order.purchased
+    }
+}
+
+export default connect(mapStateToProps)(Checkout);

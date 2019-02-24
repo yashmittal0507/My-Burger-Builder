@@ -24,31 +24,7 @@ class BurgerBuilder extends Component {
         
     }
 
-    // addIngredient =(type)=>{
-    //     let oldCount = this.state.ingredients[type];
-    //     let newCount = oldCount+1;
-    //     let upgradedIngredient ={ ...this.state.ingredients}
-    //     let newPrice = this.state.totalPrice+INGREDIENTS_PRICE[type];
-    //     upgradedIngredient[type]= newCount;
-
-    //     this.setState({ingredients:upgradedIngredient,totalPrice:newPrice})
-    //     this.calculateIngredientsQuantitySum(upgradedIngredient);
-        
-    // }
-    // removeIngredient =(type)=>{
-    //     let oldCount = this.state.ingredients[type];
-    //     if(oldCount<=0){
-    //         return;
-    //     }
-    //     let newCount = oldCount-1;
-    //     let upgradedIngredient ={ ...this.state.ingredients}
-    //     let deletedPrice = this.state.totalPrice-INGREDIENTS_PRICE[type];
-    //     upgradedIngredient[type]= newCount;
-
-    //     this.setState({ingredients:upgradedIngredient,totalPrice:deletedPrice})
-    //     this.calculateIngredientsQuantitySum(upgradedIngredient);
-        
-    // }
+    
 
     calculateIngredientsQuantitySum(updatedIngredients){
         console.log('executed');
@@ -62,7 +38,14 @@ class BurgerBuilder extends Component {
     }
 
     purchaseHandler=() => {
-        this.setState({purchasing:true})
+        if(this.props.isAuthenticated){
+            this.setState({purchasing:true})
+        }
+        else {
+            this.props.onSetAuthRedirectPath('/checkout')
+            this.props.history.push('/auth')
+        }
+        
     }
 
     purchaseCancelHandler =()=>{
@@ -100,7 +83,8 @@ class BurgerBuilder extends Component {
             disabledButton = {disabledInfo}
             price={this.props.price}
             purchasable={this.calculateIngredientsQuantitySum(this.props.ings)}
-            ordered ={this.purchaseHandler}/>
+            ordered ={this.purchaseHandler}
+            isAuth={this.props.isAuthenticated}/>
             </Aux>
             )
            
@@ -123,7 +107,8 @@ const mapStateToProps =state =>{
     return {
         ings:state.burgerBuilder.ingredients,
        price:state.burgerBuilder.totalPrice,
-       error:state.burgerBuilder.error
+       error:state.burgerBuilder.error,
+       isAuthenticated:state.auth.token!==null
     }
 }
 
@@ -132,7 +117,8 @@ const mapDispatchToProps =dispatch =>{
         onIngredientAdded:(ingName) => dispatch(burgerBuilderActions.addIngredient(ingName)),
         onIngredientRemoved:(ingName) => dispatch(burgerBuilderActions.removeIngredient(ingName)),
         onInitIngredients:() => dispatch(burgerBuilderActions.initIngredients()),
-        onPurchasedBurgerInit:() => dispatch(burgerBuilderActions.burgerPurchased())
+        onPurchasedBurgerInit:() => dispatch(burgerBuilderActions.burgerPurchased()),
+        onSetAuthRedirectPath:(path) => dispatch(burgerBuilderActions.setAuthRedirect(path))
     }
 }
 

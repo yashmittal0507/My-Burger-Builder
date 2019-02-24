@@ -32,7 +32,7 @@
 .ValidationError{
     color:red;
     margin:5px 0;
-    float:left;
+    text-align:left;
 }
 
 

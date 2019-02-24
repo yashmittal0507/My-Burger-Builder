@@ -126,10 +126,11 @@ class ContactForm extends Component {
         const order ={
             ingredients:this.props.ings,
             price:this.props.price,
-            orderData:formData
+            orderData:formData,
+            userId:this.props.userId
         
         }
-        this.props.onBurgerOrdered(order)
+        this.props.onBurgerOrdered(order,this.props.token)
        
         //  axios.post( '/orders.json', order )
         //     .then( response => {
@@ -222,12 +223,14 @@ const mapStateToProps = state =>{
     return {
         ings:state.burgerBuilder.ingredients,
         price:state.burgerBuilder.totalPrice,
-        loading:state.order.loading
+        loading:state.order.loading,
+        token:state.auth.token,
+        userId:state.auth.userId
     }
 }
 const mapDispatchToProps =dispatch =>{
     return {
-        onBurgerOrdered:(orderData) => dispatch(actions.purchaseBurger(orderData)),
+        onBurgerOrdered:(orderData,token) => dispatch(actions.purchaseBurger(orderData,token)),
      
     }
 }

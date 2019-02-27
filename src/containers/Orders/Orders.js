@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{Component,Fragment} from 'react';
 import {connect} from 'react-redux';
 import Order from '../../components/Order/Order';
 import axios from '../../Axios-Order';
@@ -18,13 +18,13 @@ class Orders extends Component {
         }
         else if(this.props.orders.length>0) {
             order =(
-                <React.Fragment>
+                <Fragment>
                 
                {this.props.orders.map(order=>{
                     return <Order key={order.id} ingredients={order.ingredients} price={order.price}/>
                })
             }
-            </React.Fragment>
+            </Fragment>
             )
         }
         else {

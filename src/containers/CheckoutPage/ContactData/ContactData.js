@@ -7,6 +7,7 @@ import Spinner from '../../../components/UIComponents/Spinner/Spinner';
 import Input from '../../../components/UIComponents/Input/Input';
 import errorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/index'
+import {updatedObject,checkValidatity} from '../../../shared/utility';
 class ContactForm extends Component {
     state ={
         orderForm:{
@@ -118,7 +119,6 @@ class ContactForm extends Component {
 
     orderhandler=(event)=>{
         event.preventDefault();
-        // this.setState({loading:true});
         const formData={};
         for (let formDataField in this.state.orderForm){
             formData[formDataField] = this.state.orderForm[formDataField].value
@@ -132,52 +132,26 @@ class ContactForm extends Component {
         }
         this.props.onBurgerOrdered(order,this.props.token)
        
-        //  axios.post( '/orders.json', order )
-        //     .then( response => {
-        //         console.log(response);
-        //         this.setState({ loading: false});
-        //         this.props.history.push('/');
-        //     } )
-        //     .catch( error => {
-        //         this.setState({ loading: false});
-        //     } );
 
     }
     inputChangeHandler(event,inputIdentifier){
-        const updatedOrderForm ={...this.state.orderForm}
-
-        const updatedFormElement = {...updatedOrderForm[inputIdentifier]};
-        updatedFormElement.value =event.target.value;
-        updatedFormElement.valid = this.checkValidatity( updatedFormElement.value,updatedFormElement.validation);
-        updatedFormElement.touched=true;
         
-        updatedOrderForm[inputIdentifier] =   updatedFormElement
+
+        const updatedFormElement = updatedObject(this.state.orderForm[inputIdentifier],{
+            value:event.target.value,
+            valid:checkValidatity( event.target.value,this.state.orderForm[inputIdentifier].validation),
+            touched:true
+        });
+        const updatedOrderForm =updatedObject(this.state.orderForm,{
+            [inputIdentifier]:updatedFormElement
+        })
         let isFormValid=true;
         for(let inputElement in updatedOrderForm){
             isFormValid = updatedOrderForm[inputElement].valid && isFormValid 
-            console.log(this.state.isFormValid,inputElement)
         }
      
         this.setState({orderForm:updatedOrderForm,isFormValid:isFormValid})
        ;
-    }
-
-    checkValidatity(value,rules){
-        let isValid=true;
-
-        if(!rules){
-            return true
-        }
-        if(rules.required){
-            isValid =value!==''
-        }
-        if(rules.minLength){
-            isValid = value.length>=5 && isValid;
-        }
-        if(rules.maxLength){
-            isValid = value.length<=5 && isValid;
-        }
-        return isValid;
     }
 
 render() {

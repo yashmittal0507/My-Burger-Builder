@@ -1,26 +1,40 @@
 import React, { Component } from 'react';
 import Layout from './hoc/layout/layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
-import Checkout from './containers/CheckoutPage/Checkout';
-import Orders from './containers/Orders/Orders';
-import Auth from './containers/Auth/Auth';
 import Logout from './containers/Auth/Logout/Logout';
 import {Route,Switch,withRouter,Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from './store/actions/index';
+import {consoleStatementsRemover} from './shared/utility';
+import asyncComponent from './hoc/asyncComponent/asyncComponent';
+
+const asyncCheckout = asyncComponent(()=>{
+  return import( './containers/CheckoutPage/Checkout')
+});
+
+const asyncOrders = asyncComponent(()=>{
+  return import( './containers/Orders/Orders')
+});
+
+const asyncAuth = asyncComponent(()=>{
+  return import( './containers/Auth/Auth')
+});
 class App extends Component {
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.onAuthRedirect()
+    if (process.env.NODE_ENV === 'production') {
+      consoleStatementsRemover()
+    }
   }
   render() {
-
+  
    let routes =null;
     if(this.props.isAuthInitialized){
      routes = (
       
-      <Switch>
-        <Route path="/auth" component ={Auth}/>
+      <Switch> 
+        <Route path="/auth" component ={asyncAuth}/>
         <Route path="/" exact component ={BurgerBuilder}/>
         <Redirect to="/"/>
       </Switch>
@@ -29,9 +43,9 @@ class App extends Component {
     if(this.props.isAuthenticated){
       routes=(
       <Switch>
-        <Route path="/checkout" component ={Checkout}/>
-        <Route path="/auth" component ={Auth}/>
-        <Route path="/orders" component ={Orders}/>
+        <Route path="/checkout" component ={asyncCheckout}/>
+        <Route path="/auth" component ={asyncAuth}/>
+        <Route path="/orders" component ={asyncOrders}/>
         <Route path="/logout" component ={Logout}/>
         <Route path="/" exact component ={BurgerBuilder}/>
         

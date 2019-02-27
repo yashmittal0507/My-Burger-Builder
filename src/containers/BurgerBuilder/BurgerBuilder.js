@@ -11,7 +11,7 @@ import errorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as burgerBuilderActions from '../../store/actions/index';
 
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
 
     state ={
         
@@ -19,7 +19,6 @@ class BurgerBuilder extends Component {
     }
 
     componentDidMount(){
-        console.log('mounted')
         this.props.onInitIngredients()
         
     }

@@ -6,6 +6,7 @@ import * as authActions from '../../store/actions/index';
 import Spinner from '../../components/UIComponents/Spinner/Spinner';
 import {Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
+import {updatedObject,checkValidatity} from '../../shared/utility';
 
 export class Auth extends Component {
    state={
@@ -50,38 +51,19 @@ export class Auth extends Component {
        }
    }
 
-   checkValidatity(value,rules){
-    let isValid=true;
-
-    if(!rules){
-        return true
-    }
-    if(rules.required){
-        isValid =value!==''
-    }
-    if(rules.pattern){
-        const patt =/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-        isValid=patt.test(value) && isValid
-    }
-    if(rules.minLength){
-        isValid = value.length>=5 && isValid;
-    }
-    if(rules.maxLength){
-        isValid = value.length<=5 && isValid;
-    }
-    return isValid;
-}
+ 
 
 inputChangeHandler=(event,controlName)=>{
-    const updatedAuthControls = {...this.state.controls,
-                                  [controlName]:{
-                                      ...this.state.controls[controlName],
-                                      value:event.target.value,
-                                      valid: this.checkValidatity(event.target.value,this.state.controls[controlName].validation),
-                                      touched:true
-                                  }
+  
+        const updatedControlName = updatedObject(this.state.controls[controlName],{
+            value:event.target.value,
+            valid:checkValidatity(event.target.value,this.state.controls[controlName].validation),
+            touched:true
+        })
 
-                                 }
+        const updatedAuthControls = updatedObject(this.state.controls,{
+            [controlName]:updatedControlName
+        })
         this.setState({controls:updatedAuthControls});
 }
 
@@ -115,6 +97,7 @@ switchAuthModeHandler=()=>{
              shouldValidate={el.config.validation}
              touched={el.config.touched}
              errorMessage={el.config.validationErrorMessage}
+             value={el.config.value}
              />
         })
 
@@ -124,6 +107,7 @@ switchAuthModeHandler=()=>{
         let errorMessage=null;
        
         if(this.props.error && this.props.error !=='undefined'){
+            console.log(this.state.controls)
             errorMessage=<p>{this.props.error}</p>
         }
         if(this.props.error ==='undefined' && this.state.isSignUp){

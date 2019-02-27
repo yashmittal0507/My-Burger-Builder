@@ -14,12 +14,12 @@ const input =(props)=>{
     switch(props.elementType){
         case('input'):
             inputElement = <input className={inputClasses.join(' ')} {...props.elementConfig}
-            value={props.value}/>
+            defaultValue={props.value}/>
             break;
         case('textarea'):
             inputElement =<textarea  className={inputClasses.join(' ')}
             {...props.elementConfig}
-             value={props.value}/>
+            defaultValue={props.value}/>
             break;
         case('select'):
         inputElement=<select className={inputClasses.join(' ')} value={props.value} style={{padding:'3px 14px'}}>
@@ -33,7 +33,7 @@ const input =(props)=>{
         default:
             inputElement = <input className={inputClasses.join(' ')} 
             {...props.elementConfig}
-            value={props.value}/>
+            defaultValue={props.value}/>
             break;
     }
 

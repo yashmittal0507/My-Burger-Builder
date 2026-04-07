@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_user_role">
+    <sys_user_role action="INSERT_OR_UPDATE">
+        <assignable_by/>
+        <can_delegate>true</can_delegate>
+        <description/>
+        <elevated_privilege>false</elevated_privilege>
+        <federated_id>azUx1LQ5BLQdpdjAsBDrxHlPHmOH9+dPM0me+uPikhY=</federated_id>
+        <grantable>true</grantable>
+        <includes_roles/>
+        <name>admin1</name>
+        <scoped_admin>false</scoped_admin>
+        <suffix/>
+        <sys_class_name>sys_user_role</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-04-07 06:38:28</sys_created_on>
+        <sys_id>c59237de8388471030aa9a96feaad3b8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>admin1</sys_name>
+        <sys_package display_value="test case task" source="1f32f79e8388471030aa9a96feaad34a">1f32f79e8388471030aa9a96feaad34a</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="test case task">1f32f79e8388471030aa9a96feaad34a</sys_scope>
+        <sys_update_name>sys_user_role_c59237de8388471030aa9a96feaad3b8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-04-07 06:38:28</sys_updated_on>
+    </sys_user_role>
+</record_update>

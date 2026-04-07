@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="timeFromCreateToActivate=5000" db_object_id="cc92f3de8388471030aa9a96feaad35c" label="test casetask table" max_length="40" name="u_test_casetask_table" type="collection"/>
+</database>
